@@ -1,0 +1,20 @@
+//definimos la configuracion de conexion a la DB para migraciones
+
+const config  = require('../config/config');
+
+//definimos el exports que contendra ambiente de desarrollo y de produccion.
+
+module.exports = {
+  development: {
+    url: config.dbUrl,
+    dialect: 'postgres',
+  },
+  production: {
+    url: config.dbUrl,
+    dialect: 'postgres',
+    ssl:{
+      rejectUnauthorized : false
+    }
+  },
+}
+

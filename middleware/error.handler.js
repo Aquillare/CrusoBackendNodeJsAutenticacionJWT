@@ -1,3 +1,7 @@
+//importamos la instancia ValidatorHandlwer de sequelize que nos permitira verificar si
+//un error es de tipo ORM
+const { ValidationError } = require('sequelize');
+
 //declaramos nuestro middleware de error que usaremos de forma global.
 
 function logErrors(err, req, res, next){
@@ -28,5 +32,20 @@ function boomErrorHandler (err, req, res, next){
  }
 
 }
+ //declaramos un middleware para recibir los errores de ORM, provenientes de la DB
 
-module.exports={logErrors, errorHandler, boomErrorHandler}
+ function ormErrorHandler (err, req, res, next){
+   if(err instanceof ValidationError ){
+     res.status(409).json({
+       statusCode: 409,
+       message: err.message,
+       errors: err.errors
+     });
+   }else{
+    next(err);
+   }
+  }
+
+
+
+module.exports={logErrors, errorHandler, boomErrorHandler, ormErrorHandler}

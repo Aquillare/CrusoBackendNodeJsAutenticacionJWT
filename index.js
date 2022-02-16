@@ -12,7 +12,7 @@ const express = require('express');
 const app = express();
 
 //importamos los middleware para el manejo de errores.
-const {logErrors, errorHandler,boomErrorHandler} = require('./middleware/error.handler');
+const {logErrors, errorHandler,boomErrorHandler, ormErrorHandler} = require('./middleware/error.handler');
 
 
 //este middleware nos servira para poder recibir informacion que nos envien en formate json, por ejemplo
@@ -74,6 +74,7 @@ routerApi(app);
 
 //lammamos a los middlewares mediante app.use, es importante llamarlos en orden.
 app.use(logErrors);
+app.use(ormErrorHandler);
 app.use(boomErrorHandler);
 app.use(errorHandler);
 

@@ -3,10 +3,10 @@ const ProductService = require('../services/product.service');
 
 //importamos middleware de validacionde informacion y schemas.
 const validatorHandler = require('../middleware/validator.handler');
-const {createProductSchema, updateProductSchema, getProductSchema} = require('../schemas/product.schema');
+const {createProductSchema, updateProductSchema, getProductSchema, queryProductSchema } = require('../schemas/product.schema');
 
 
-//creamos una variable que contengo el metodo Router de express;
+//creamos una variable que contenga el metodo Router de express;
 const router = express.Router();
 
 //creamos una instancia de la clase ProductService
@@ -14,9 +14,11 @@ const service = new ProductService();
 
 
 
-router.get('/', async (req,res,next) => {
+router.get('/',
+ validatorHandler(queryProductSchema, 'query'),
+ async (req,res,next) => {
   try{
-    const products = await service.find();
+    const products = await service.find(req.query);
     res.json(products);
   }catch(err){
     next(err);

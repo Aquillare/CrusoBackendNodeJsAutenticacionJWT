@@ -9,7 +9,7 @@ const options = {
 
 if(config.isProd) {
   options.dialectOptions = {
-    ssl ={
+    ssl:{
       rejectUnauthorized: false
     }
   }

@@ -8,13 +8,18 @@ const config = require('../config/config');
 
 let URI = '';
 
+const options = {};
+
 if(config.isProd){
-  URI = config.dbUrl;
+  options.conectionString = config.dbUrl;
+  options.ssl = {
+    rejectUnauthorized: false
+  };
 } else {
   const USER = encodeURIComponent(config.dbUser);
   const PASSWORD = encodeURIComponent(config.dbPassword);
-
   const URI =`postgres://${USER}:${PASSWORD}@${config.dbHost}:${config.dbPort}/${config.dbName}`;
+  options.conectionString = URI;
 }
 
 
@@ -22,6 +27,6 @@ if(config.isProd){
 //requeridos para establecer la conexion con la base de
 //datos.
 
-const pool = new Pool({ connectionString: URI });
+const pool = new Pool(options);
 
 module.exports = pool;

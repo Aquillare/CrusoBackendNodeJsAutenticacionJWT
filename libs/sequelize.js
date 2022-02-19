@@ -16,7 +16,7 @@ if(config.isProd) {
 };
 
 //creamos una instancia de sequelize
-const sequelize = new Sequelize(config.dbUrl, { options });
+const sequelize = new Sequelize(config.dbUrl,  options );
 
 // establecemos la configuracion de neustros moddelosde tablas.
 setupModels(sequelize);

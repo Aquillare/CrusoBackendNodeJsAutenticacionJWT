@@ -14,6 +14,9 @@ const app = express();
 //importamos los middleware para el manejo de errores.
 const {logErrors, errorHandler,boomErrorHandler, ormErrorHandler} = require('./middleware/error.handler');
 
+//importamos middleware de verificacion
+const checkApiKey = require('./middleware/auth.handler');
+
 
 //este middleware nos servira para poder recibir informacion que nos envien en formate json, por ejemplo
 //cuando se use el metodo post para crear un producto
@@ -57,9 +60,9 @@ app.get('/', (req,res) => {
   //send es un metodo de responde
 });
 
-//creamos otra ruta
+//creamos otra ruta, next
 
-app.get('/nueva-ruta', (req,res) => {
+app.get('/nueva-ruta', checkApiKey ,(req,res) => {
   res.send('This is a new Route whit express');
 })
 

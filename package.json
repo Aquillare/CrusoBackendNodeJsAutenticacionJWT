@@ -1,7 +1,6 @@
 {
   "name": "mystore",
   "version": "1.0.0",
-  "description": "",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -14,8 +13,8 @@
     "migrations:delete": "sequelize-cli db:migrate:undo:all"
   },
   "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "author": "Migul Aguilar",
+  "license": "(MIT)",
   "dependencies": {
     "@hapi/boom": "^9.1.4",
     "bcrypt": "^5.0.1",
@@ -41,5 +40,14 @@
   },
   "devDependencies": {
     "sequelize-cli": "^6.4.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Aquillare/CrusoBackendNodeJsAutenticacionJWT.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Aquillare/CrusoBackendNodeJsAutenticacionJWT/issues"
+  },
+  "homepage": "https://github.com/Aquillare/CrusoBackendNodeJsAutenticacionJWT#readme",
+  "description": ""
 }

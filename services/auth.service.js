@@ -2,7 +2,6 @@ const boom = require('@hapi/boom');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const nodemailer = require('nodemailer');
-const { classToInvokable } = require('sequelize/dist/lib/utils');
 
 const config = require('../config/config');
 

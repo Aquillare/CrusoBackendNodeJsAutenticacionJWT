@@ -16,5 +16,5 @@ function signToken(payload, secret){
 const token = signToken(payload,secret);
 console.log(token);
 
-//output
+//outpu
 //eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOjEsInJvbGUiOiJjdXN0b21lciIsImlhdCI6MTY0NTU3ODA3M30.2CmyPImE_FnrFV1b5VvtSXT1cQoT3-OJYxVngqHw1FA

@@ -1,7 +1,11 @@
 const routerApi = require('./routes');
+const passport = require('passport');
 
 //importamos cors
 const cors = require('cors');
+
+//importamos las estrategias de auth
+//const passportStrategies = require('./utils/auth');
 
 
 //importamos express
@@ -15,7 +19,8 @@ const app = express();
 const {logErrors, errorHandler,boomErrorHandler, ormErrorHandler} = require('./middleware/error.handler');
 
 //importamos middleware de verificacion
-const checkApiKey = require('./middleware/auth.handler');
+const {checkApiKey} = require('./middleware/auth.handler');
+const passportStrategies = require('./utils/auth');
 
 
 //este middleware nos servira para poder recibir informacion que nos envien en formate json, por ejemplo
@@ -47,6 +52,9 @@ const options = {
 //cors
 app.use(cors(options));
 
+//passport strategies
+
+
 
 
 //definimos un ruta mediante el metodo get de express, el metodo get recibe la ruta como primer
@@ -70,6 +78,10 @@ app.get('/nueva-ruta', checkApiKey ,(req,res) => {
 //lo que mas enviaremos ya que crearemos un Api para comunicar datos al frontend.
 
 
+//debemos inicializar el middlevare de passport
+app.use(passport.initialize());
+
+passportStrategies();
 
 
 //llamamos a routerApi y le pasamos como argumento la variable app que contiene a express();

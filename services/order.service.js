@@ -7,12 +7,19 @@ class OrderService {
   constructor() {}
 
   async create(data) {
-    try{
-      const order = await models.Order.create(data);
-      return order;
-    }catch(err){
-      throw err;
-    }
+      const customer = await models.Customer.findAll({
+        where:{
+          '$user.id$' : data
+        },
+        include:['user']
+      });
+      if(!customer){
+        throw boom.unauthorized('No es un cliente valido');
+      }else{
+        const customerId = {...customer}['0'].dataValues.id;
+        const order = await models.Order.create({customerId:customerId});
+        return order;
+      }
   }
 
   async  addItem(data){
@@ -43,6 +50,21 @@ class OrderService {
       throw boom.notFound('Order not found');
     }
     return order;
+  }
+
+  async findByUser(userId){
+    const orders = await models.Order.findAll({
+      where: {
+        '$customer.user.id$': userId
+      },
+      include: [
+        {
+          association: 'customer',
+          include: ['user']
+        }
+      ]
+    });
+    return orders;
   }
 
   async update(id, changes){

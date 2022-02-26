@@ -1,4 +1,6 @@
 const express = require('express');
+const passport = require('passport');
+const { checkAdminRole, checkRoles } = require('../middleware/auth.handler');
 const categoryService = require('../services/category.service');
 
 //creamos una variable router que contenga el metodo Router de express
@@ -22,6 +24,8 @@ router.get('/', async (req,res,next) => {
 });
 
 router.get('/:id',
+passport.authenticate('jwt', {session : false}),
+checkRoles('admin','customer'),
 validatorHandler(getCategorySchema, 'params'),
 async (req,res,next) => {
   try{
@@ -34,6 +38,8 @@ async (req,res,next) => {
 });
 
 router.post('/',
+passport.authenticate('jwt', {session : false}),
+checkRoles('admin'),
 validatorHandler(createCategorySchema, 'body'),
 async(req,res,next) => {
   try{
@@ -46,6 +52,8 @@ async(req,res,next) => {
 });
 
 router.patch('/:id',
+passport.authenticate('jwt', { session:false }),
+checkRoles('admin'),
 validatorHandler(getCategorySchema, 'params'),
 validatorHandler(updateCategorySchema, 'body'),
 async (req,res,next) => {
@@ -60,6 +68,8 @@ async (req,res,next) => {
 });
 
 router.delete('/:id',
+passport.authenticate('jwt', { session:false }),
+checkRoles('admin'),
 validatorHandler(getCategorySchema, 'params'),
 async(req,res,next) => {
   try{

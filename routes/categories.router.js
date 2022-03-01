@@ -1,6 +1,6 @@
 const express = require('express');
 const passport = require('passport');
-const { checkAdminRole, checkRoles } = require('../middleware/auth.handler');
+const { checkRoles } = require('../middleware/auth.handler');
 const categoryService = require('../services/category.service');
 
 //creamos una variable router que contenga el metodo Router de express

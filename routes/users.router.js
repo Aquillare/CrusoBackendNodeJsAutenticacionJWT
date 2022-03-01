@@ -1,8 +1,10 @@
 const express = require('express');
 const userService = require('../services/user.service');
+const passport = require('passport');
 
 //importamos middleware de validacion de informacion y schemas
 const validatorHandler = require('../middleware/validator.handler');
+const { checkRoles} = require('../middleware/auth.handler');
 const {createUserSchema, updateUserSchema, getUserSchema} = require('../schemas/user.schema');
 
 //creamos una variable router que contenga el metodo Router de expressç
@@ -12,7 +14,10 @@ const router = express.Router();
 const service = new userService();
 
 
-router.get('/', async (req, res, next) => {
+router.get('/',
+passport.authenticate('jwt', {session:false}),
+checkRoles('admin'),
+ async (req, res, next) => {
   try{
      const categories = await service.find();
      res.json(categories);
@@ -23,6 +28,8 @@ router.get('/', async (req, res, next) => {
 
 
 router.get('/:id',
+ passport.authenticate('jwt', {session:false}),
+ checkRoles('admin'),
  validatorHandler(getUserSchema, 'params'),
  async (req,res,next) => {
   try{
@@ -35,6 +42,8 @@ router.get('/:id',
 });
 
 router.post('/',
+ passport.authenticate('jwt', {session:false}),
+ checkRoles('admin') ,
  validatorHandler(createUserSchema, 'body'),
  async (req,res,next)=> {
   try{
@@ -47,6 +56,8 @@ router.post('/',
 });
 
 router.patch('/:id',
+passport.authenticate('jwt', {session:false}),
+checkRoles('admin'),
 validatorHandler(getUserSchema, 'params'),
 validatorHandler(updateUserSchema, 'body'),
 async (req,res,next) => {
@@ -61,6 +72,8 @@ async (req,res,next) => {
 });
 
 router.delete('/:id',
+passport.authenticate('jwt', {session:false}),
+checkRoles('admin'),
 validatorHandler(getUserSchema, 'params'),
 async (req,res,next) => {
   try{

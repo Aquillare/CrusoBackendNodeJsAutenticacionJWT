@@ -3,6 +3,7 @@ const pool = require('../libs/postgres.pool');
 const { models } = require('../libs/sequelize');
 const bcrypt = require('bcrypt');
 
+
 class UserService {
 
   constructor(){
@@ -17,6 +18,7 @@ class UserService {
         ...data,
         password: hash
       });
+      delete newUser.dataValues.recoveryPassword;
       delete newUser.dataValues.password;
       return newUser;
     }catch (err){
@@ -38,6 +40,9 @@ class UserService {
     const user = await models.User.findOne({
       where : { email }
     });
+    if(!user){
+      throw boom.notFound('user not found');
+    }
     return user;
   }
 

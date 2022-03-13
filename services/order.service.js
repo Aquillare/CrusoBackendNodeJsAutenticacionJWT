@@ -24,8 +24,33 @@ class OrderService {
 
   async  addItem(data){
     try{
-      const item = await models.OrderProduct.create(data);
-      return item;
+      /* const customer = await models.Customer.findAll({
+        where:{
+          '$user.id$' : data.userId
+        },
+        include:['user']
+      });
+      if(!customer){
+        throw boom.unauthorized('No es un cliente valido');
+      }else{*/
+        /*const customerId = {...customer}['0'].dataValues.id;
+        const order = await models.Order.findAll({
+          where:{
+            '$customer.id$' : customerId
+          },
+          include:['customer']
+        });
+        const orderId = {...order}['0'].dataValues.id;
+        console.log(orderId);
+        const customerData = {
+          ...data,
+          orderId: orderId
+        }
+        delete customerData.userId;
+        console.log('customerData = ', customerData)*/
+        const item = await models.OrderProduct.create(data);
+        return item;
+
     }catch(err){
       throw err;
     }

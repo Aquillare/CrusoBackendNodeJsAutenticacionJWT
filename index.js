@@ -35,7 +35,7 @@ const puerto = process.env.PORT ||3000;
 
 
 //inicializamos una variable que contenga un array con los dominios permitidos
-const whiteList = ['http://localhost:5500'];
+const whiteList = ['http://localhost:5500','http://localhost:3000'];
 
 //establecemos un objeto con la configuracion para cors.
 const options = {

@@ -6,14 +6,6 @@ const { models } = require('../libs/sequelize');
 
 class ProductService {
 
-  constructor(){
-    this.generate();
-  }
-
-  generate(){
-
-  }
-
   async create(data){
     try{
       const newProduct = await models.Product.create(data);

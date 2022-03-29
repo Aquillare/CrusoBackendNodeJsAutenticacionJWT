@@ -2,6 +2,8 @@ const express = require('express');
 const passport = require('passport');
 const { checkRoles } = require('../middleware/auth.handler');
 const categoryService = require('../services/category.service');
+const AWS = require('aws-sdk');
+const config = require('../config/config');
 
 //creamos una variable router que contenga el metodo Router de express
 const router = express.Router();
@@ -13,6 +15,13 @@ const { createCategorySchema, updateCategorySchema, getCategorySchema} = require
 
 //creamos una instancia de la calse categoryService
 const service = new categoryService();
+
+const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
+
+const s3 = new AWS.S3({
+  endpoint: spacesEndpoint,
+});
+
 
 router.get('/', async (req,res,next) => {
   try{
@@ -44,7 +53,22 @@ validatorHandler(createCategorySchema, 'body'),
 async(req,res,next) => {
   try{
     const body = req.body;
-    const newCategory = await service.create(body);
+    const image = req.files.image;
+
+    const uploadObject = await s3.putObject({
+      ACL: 'public-read',
+      Bucket: config.bucketName,
+      Body:image.data,
+      Key: image.name,
+    }).promise();
+
+    const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${image.name}`;
+    const data = {
+      ...body,
+      image: urlImage,
+    };
+
+    const newCategory = await service.create(data);
     res.status(201).json(newCategory);
   } catch(err) {
     next(err);
@@ -58,9 +82,42 @@ validatorHandler(getCategorySchema, 'params'),
 validatorHandler(updateCategorySchema, 'body'),
 async (req,res,next) => {
   try{
-    const {id} = req.params;
+    const { id } = req.params;
     const body = req.body;
-    const category = await service.update(id, body);
+    const image = req.files.image;
+
+      /*para eliminar la imagen que ya no sera usada de la nube*/
+      const categoryElement = await service.findOne(id);
+      console.log(categoryElement);
+      const keyImage = categoryElement.image.slice(46);
+      console.log(keyImage)
+
+      const deleteObject = await s3.deleteObject({
+        Bucket: config.bucketName,
+        Key: keyImage,
+      }).promise();
+
+      console.log(deleteObject);
+
+
+    /*actualizando la categoria*/
+
+    const uploadObject = await s3.putObject({
+      ACL: 'public-read',
+      Bucket: config.bucketName,
+      Body:image.data,
+      Key: image.name,
+    }).promise();
+
+    const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${image.name}`;
+
+    const data = {
+      ...body,
+      image: urlImage,
+    };
+
+
+    const category = await service.update(id,data);
     res.json(category);
   } catch(err) {
     next(err);

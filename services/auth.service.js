@@ -40,6 +40,20 @@ class AuthService {
     }
   }
 
+ async verifyToken(token){
+   try{
+    const payload = jwt.verify(token, config.jwtSecret);
+    const userData = await service.findOne(payload.sub);
+    const user = {
+     email: userData.email,
+     role: payload.role,
+     };
+    return user;
+   }catch(error){
+     next(error);
+   };
+ };
+
   async sendRecovery(email){
     const user = await service.findByEmail(email);
     if(!user){

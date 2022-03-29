@@ -26,7 +26,7 @@ function checkRoles(...roles){
     if(roles.includes(user.role)) {
       next();
     }else{
-      next(boom.unauthorized());
+      next(boom.unauthorized('no posees permisos necesarios'));
     }
   }
 }

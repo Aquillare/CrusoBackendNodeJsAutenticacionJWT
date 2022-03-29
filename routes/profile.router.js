@@ -2,9 +2,11 @@ const express = require('express');
 const passport = require('passport');
 const OrderService = require('../services/order.service');
 
+
 const router = express.Router();
 
 const service = new OrderService();
+
 
 
 
@@ -17,7 +19,9 @@ router.get('/my-orders',
     res.json(orders);
   }catch(error){
     next(error);
-  }
-})
+  };
+});
+
+
 
 module.exports = router;

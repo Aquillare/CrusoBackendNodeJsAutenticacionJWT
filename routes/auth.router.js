@@ -3,8 +3,10 @@ const passport = require('passport');
 const validatorHandler = require('../middleware/validator.handler');
 const { changePasswordSchema, loginSchema , recoveryPasswordSchema} = require('../schemas/auth.schema');
 const AuthService = require('../services/auth.service');
+const UserService = require ('../services/user.service');
 
 const service = new AuthService();
+const userService = new UserService();
 
 const router = express.Router();
 
@@ -43,5 +45,22 @@ router.post('/change-password',
       next(error);
     }
 });
+
+router.get('/profile',
+  passport.authenticate('jwt', {session:false}),
+  async(req, res, next) => {
+    try{
+      userR = req.user;
+      const user = await userService.findOne(userR.sub);
+      const userData = {
+        email: user.email,
+        role: user.role,
+      };
+      res.json(userData);
+    }catch(error){
+      next(error);
+    };
+  }
+)
 
 module.exports = router;

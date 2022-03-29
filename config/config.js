@@ -18,6 +18,8 @@ const config = {
   jwtSecret: process.env.JWT_SECRET,
   emailAccount: process.env.EMAIL_ACCOUNT,
   emailPassword: process.env.EMAIL_PASSWORD,
- }
+  cloudEndpoint: process.env.CLOUD_FILES || '',
+  bucketName: process.env.BUCKET_NAME || '',
+ };
 
  module.exports = config;

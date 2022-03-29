@@ -4,6 +4,7 @@ const Joi = require('joi');
 //es importante que seguido de Join indiquemos primero el tipo de dato, luego la o las validaciones.
 const id = Joi.number().integer();
 const name = Joi.string().min(3).max(20);
+//const title = Joi.string().min(3).max(20);
 const price = Joi.number().integer().min(10);
 const description = Joi.string().min(10);
 const image = Joi.string().uri();  //uri es de url.
@@ -19,8 +20,9 @@ const price_max = Joi.number().integer();
 //indicaremos a traves del metodo requerid() de Joi, si son requeridos.
 const createProductSchema = Joi.object({
   name: name.required(),
+ //title: title.required(),
   price: price.required(),
-  image: image.required(),
+  image: image,
   description: description.required(),
   categoryId: categoryId.required()
 });
@@ -28,6 +30,7 @@ const createProductSchema = Joi.object({
 //definimos un esquema para la actualizacion de productos
 const updateProductSchema = Joi.object({
   name: name,
+  //title: title,
   price: price,
   image: image,
   description: description,

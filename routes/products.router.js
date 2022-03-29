@@ -1,5 +1,9 @@
 const express = require('express');
+const passport = require('passport');
+const { checkRoles } = require('../middleware/auth.handler');
 const ProductService = require('../services/product.service');
+const AWS = require('aws-sdk');
+const config = require('../config/config');
 
 //importamos middleware de validacionde informacion y schemas.
 const validatorHandler = require('../middleware/validator.handler');
@@ -13,6 +17,11 @@ const router = express.Router();
 const service = new ProductService();
 
 
+const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
+
+const s3 = new AWS.S3({
+  endpoint: spacesEndpoint,
+});
 
 router.get('/',
  validatorHandler(queryProductSchema, 'query'),
@@ -49,15 +58,32 @@ validatorHandler(getProductSchema, 'params') ,
 
 //useremos el metodo post para recibir las solicitudes de creacion de productos
 router.post('/',
+passport.authenticate('jwt', {session : false}),
+checkRoles('admin'),
  validatorHandler(createProductSchema, 'body'),
  async (req,res,next) => {
   try{
     const body = req.body;
-    const newProduct = await service.create(body);
+    const image = req.files.image;
+    const idd = Math.ceil(Math.random() * 1000);
 
+    const uploadObject = await s3.putObject({
+      ACL: 'public-read',
+      Bucket: config.bucketName,
+      Body:image.data,
+      Key: `${idd}${image.name}`,
+    }).promise();
+
+    const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${idd}${image.name}`;
+    const data = {
+      ...body,
+      image: urlImage,
+    };
+
+    const newProduct = await service.create(data);
     res.status(201).json(newProduct);
-  }catch(err){
-    next(err)
+  }catch(error){
+    next(error);
   }
 });
 
@@ -69,7 +95,46 @@ router.patch('/:id',
   try{
     const { id } = req.params;
     const body = req.body;
-    const updateProduct = await service.update(id,body);
+    const image = req.files.image;
+    const idd = Math.ceil(Math.random() * 1000);
+
+
+      /*para eliminar la imagen que ya no sera usada de la nube*/
+      const product = await service.findOne(id);
+      console.log(product);
+      const keyImage = product.image.slice(46);
+      console.log(keyImage)
+
+      const deleteObject = await s3.deleteObject({
+        Bucket: config.bucketName,
+        Key: keyImage,
+      }).promise();
+
+      console.log(deleteObject);
+
+
+    /*actualizando el producto*/
+
+    const uploadObject = await s3.putObject({
+      ACL: 'public-read',
+      Bucket: config.bucketName,
+      Body:image.data,
+      Key: `${idd}${image.name}`,
+    }).promise();
+
+    const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${idd}${image.name}`;
+
+    const data = {
+      ...body,
+      categoryId: parseInt(body.categoryId),
+      image: urlImage,
+    };
+
+
+
+    const updateProduct = await service.update(id,data);
+
+
 
     res.json(updateProduct);
   }catch(err){
@@ -80,10 +145,22 @@ router.patch('/:id',
 
 //usaremos el metodo delete para recibir las solicitudes de eliminacion de productos
 router.delete('/:id',
+ passport.authenticate('jwt', {session : false}),
+ checkRoles('admin'),
  validatorHandler(getProductSchema, 'params'),
  async (req, res,next) => {
   try{
     const {id} = req.params;
+
+    /*para eliminar la imagen que ya no sera usada de la nube*/
+    const product = await service.findOne(id);
+    const keyImage = product.image.slice(46);
+
+    const deleteObject = await s3.deleteObject({
+      Bucket: config.bucketName,
+      Key: keyImage,
+    }).promise();
+
     const rta = await service.delete(id);
 
     res.json(rta);
@@ -95,3 +172,6 @@ router.delete('/:id',
 
 
 module.exports = router;
+
+
+

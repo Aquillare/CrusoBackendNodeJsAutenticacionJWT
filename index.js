@@ -7,6 +7,9 @@ const cors = require('cors');
 //importamos las estrategias de auth
 //const passportStrategies = require('./utils/auth');
 
+//importamos la libreria fileupload, para trabajr con archivos
+const fileupload = require('express-fileupload');
+
 
 //importamos express
 const express = require('express');
@@ -35,7 +38,7 @@ const puerto = process.env.PORT ||3000;
 
 
 //inicializamos una variable que contenga un array con los dominios permitidos
-const whiteList = ['http://localhost:5500','http://localhost:3000'];
+const whiteList = ['http://localhost:5500','http://localhost:3000','http://localhost:3001'];
 
 //establecemos un objeto con la configuracion para cors.
 const options = {
@@ -82,6 +85,13 @@ app.get('/nueva-ruta', checkApiKey ,(req,res) => {
 app.use(passport.initialize());
 
 passportStrategies();
+
+//inicializamos el middleware de fileupload , le pasamos un objeto de conifguracion que
+//Establece que los archvios se guardaran temporalmente en una carpeta mientras se procesa
+//la solicitud para subirlos a la nube, luego se borran de la carpeta temporal.
+app.use(fileupload({
+  tempFileDir: '/temp',
+}));
 
 
 //llamamos a routerApi y le pasamos como argumento la variable app que contiene a express();

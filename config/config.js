@@ -20,8 +20,8 @@ const config = {
   emailPassword: process.env.EMAIL_PASSWORD,
   cloudEndpoint: process.env.CLOUD_FILES || '',
   bucketName: process.env.BUCKET_NAME || '',
-  awsAccessKey: process.env.AWS_ACCESS_KEY || '',
-  awsSecretKey: process.env.AWS_SECRET_KEY || '',
+  awsAccessKey: process.env.AWS_ACCESS_KEY_ID || '',
+  awsSecretKey: process.env.AWS_SECRET_ACCESS_KEY || '',
  };
 
  module.exports = config;

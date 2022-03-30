@@ -22,7 +22,7 @@ const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
 
 const s3 = new AWS.S3({
   endpoint: spacesEndpoint,
-  region:'us-east-2'
+  region:'us-west-1'
 });
 
 

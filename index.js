@@ -1,5 +1,6 @@
 const routerApi = require('./routes');
 const passport = require('passport');
+const config = require('./config/config');
 
 //importamos cors
 const cors = require('cors');
@@ -38,7 +39,7 @@ const puerto = process.env.PORT ||3000;
 
 
 //inicializamos una variable que contenga un array con los dominios permitidos
-const whiteList = ['http://localhost:5500','http://localhost:3000','http://localhost:3001'];
+const whiteList = ['http://localhost:5500','http://localhost:3000','http://localhost:3001',process.env.WHITE_POINT_ONE, process.env.WHITE_POINT_TWO];
 
 //establecemos un objeto con la configuracion para cors.
 const options = {

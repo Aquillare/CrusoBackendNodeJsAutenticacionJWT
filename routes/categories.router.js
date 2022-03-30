@@ -16,6 +16,8 @@ const { createCategorySchema, updateCategorySchema, getCategorySchema} = require
 //creamos una instancia de la calse categoryService
 const service = new categoryService();
 
+AWS.config.update({ region:'us-west-1' });
+
 const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
 
 const s3 = new AWS.S3({

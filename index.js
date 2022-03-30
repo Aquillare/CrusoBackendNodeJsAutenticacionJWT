@@ -1,8 +1,7 @@
 const routerApi = require('./routes');
 const passport = require('passport');
 const config = require('./config/config');
-const AWS = require('aws-sdk');
-AWS.config.update({ region:'us-west-1' });
+
 
 //importamos cors
 const cors = require('cors');

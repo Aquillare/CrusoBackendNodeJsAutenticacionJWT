@@ -22,7 +22,8 @@ const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
 
 const s3 = new AWS.S3({
   endpoint:spacesEndpoint,
-  s3BucketEndpoint: true,
+  //s3BucketEndpoint: true,
+  s3ForcePathStyle: true,
 
 });
 

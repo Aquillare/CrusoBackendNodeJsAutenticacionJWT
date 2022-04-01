@@ -21,8 +21,12 @@ const service = new categoryService();
 const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
 
 const s3 = new AWS.S3({
-  endpoint: `https://${config.cloudEndpoint}`,
+  endpoint:spacesEndpoint,
+  s3BucketEndpoint: true,
+
 });
+
+console.log(s3);
 
 
 router.get('/', async (req,res,next) => {

@@ -26,8 +26,6 @@ const s3 = new AWS.S3({
 
 });
 
-console.log(s3);
-
 
 router.get('/', async (req,res,next) => {
   try{

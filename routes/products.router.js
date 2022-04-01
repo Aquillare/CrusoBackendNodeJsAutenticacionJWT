@@ -8,7 +8,6 @@ const config = require('../config/config');
 //importamos middleware de validacionde informacion y schemas.
 const validatorHandler = require('../middleware/validator.handler');
 const {createProductSchema, updateProductSchema, getProductSchema, queryProductSchema } = require('../schemas/product.schema');
-const { cloudEndpoint } = require('../config/config');
 
 
 //creamos una variable que contenga el metodo Router de express;
@@ -18,10 +17,10 @@ const router = express.Router();
 const service = new ProductService();
 
 
-//const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
+const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
 
 const s3 = new AWS.S3({
-  endpoint: `https://${config.cloudEndpoint}`,
+  endpoint: spacesEndpoint,
 });
 
 router.get('/',

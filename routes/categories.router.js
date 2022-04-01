@@ -21,8 +21,7 @@ const service = new categoryService();
 const spacesEndpoint = new AWS.Endpoint(config.cloudEndpoint);
 
 const s3 = new AWS.S3({
-  endpoint: spacesEndpoint,
-  region:'us-west-1'
+  endpoint: `https://${config.cloudEndpoint}`,
 });
 
 

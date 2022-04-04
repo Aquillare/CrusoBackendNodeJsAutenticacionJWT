@@ -25,7 +25,7 @@ const s3 = new AWS.S3({
   credentials:{
     accessKeyId:config.awsAccessKey,
     secretAccessKey: config.awsSecretKey
-  }
+  },
 });
 
 
@@ -60,12 +60,13 @@ async(req,res,next) => {
   try{
     const body = req.body;
     const image = req.files.image;
+    const idd = Math.ceil(Math.random() * 1000);
 
     const uploadObject = await s3.putObject({
       ACL: 'public-read',
       Bucket: config.bucketName,
       Body:image.data,
-      Key: image.name,
+      Key: `${idd}${image.name}`,
     }).promise();
 
     const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${image.name}`;
@@ -90,9 +91,14 @@ async (req,res,next) => {
   try{
     const { id } = req.params;
     const body = req.body;
-    const image = req.files.image;
+    const idd = Math.ceil(Math.random() * 1000);
+    let data;
 
-      /*para eliminar la imagen que ya no sera usada de la nube*/
+
+    if(req.files != null ){
+      const image = req.files.image;
+
+       /*para eliminar la imagen que ya no sera usada de la nube*/
       const categoryElement = await service.findOne(id);
       console.log(categoryElement);
       const keyImage = categoryElement.image.slice(46);
@@ -105,23 +111,29 @@ async (req,res,next) => {
 
       console.log(deleteObject);
 
+      /*Actualizando la imagen en la nube*/
+      const uploadObject = await s3.putObject({
+        ACL: 'public-read',
+        Bucket: config.bucketName,
+        Body:image.data,
+        Key: `${idd}${image.name}`,
+      }).promise();
 
-    /*actualizando la categoria*/
+      const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${image.name}`;
 
-    const uploadObject = await s3.putObject({
-      ACL: 'public-read',
-      Bucket: config.bucketName,
-      Body:image.data,
-      Key: image.name,
-    }).promise();
 
-    const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${image.name}`;
-
-    const data = {
-      ...body,
-      image: urlImage,
+      data = {
+        ...body,
+        image: urlImage,
+      }
+    }else{
+      data = {
+        ...body
+      }
     };
 
+
+    /*actualizando la categoria*/
 
     const category = await service.update(id,data);
     res.json(category);

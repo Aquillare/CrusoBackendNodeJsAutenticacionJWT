@@ -95,41 +95,50 @@ router.patch('/:id',
   try{
     const { id } = req.params;
     const body = req.body;
-    const image = req.files.image;
     const idd = Math.ceil(Math.random() * 1000);
-
+    let data;
 
       /*para eliminar la imagen que ya no sera usada de la nube*/
-      const product = await service.findOne(id);
-      console.log(product);
-      const keyImage = product.image.slice(46);
-      console.log(keyImage)
+    if(req.files != null){
+        const image = req.files.image;
+        const product = await service.findOne(id);
+        console.log(product);
+        const keyImage = product.image.slice(46);
+        console.log(keyImage)
 
-      const deleteObject = await s3.deleteObject({
-        Bucket: config.bucketName,
-        Key: keyImage,
-      }).promise();
+        const deleteObject = await s3.deleteObject({
+          Bucket: config.bucketName,
+          Key: keyImage,
+        }).promise();
 
-      console.log(deleteObject);
+        console.log(deleteObject);
+
+        //actualizando la imagen en la nube
+        const uploadObject = await s3.putObject({
+          ACL: 'public-read',
+          Bucket: config.bucketName,
+          Body:image.data,
+          Key: `${idd}${image.name}`,
+        }).promise();
+
+        const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${idd}${image.name}`;
+
+        data = {
+          ...body,
+          image: urlImage,
+        };
+    }else{
+      /**
+       * Si no hay una imagen a actualizar, data contendra solo el body de la peticion
+       */
+      data = {
+        ...body,
+      };
+    };
+
 
 
     /*actualizando el producto*/
-
-    const uploadObject = await s3.putObject({
-      ACL: 'public-read',
-      Bucket: config.bucketName,
-      Body:image.data,
-      Key: `${idd}${image.name}`,
-    }).promise();
-
-    const urlImage = `https://${config.bucketName}.${config.cloudEndpoint}/${idd}${image.name}`;
-
-    const data = {
-      ...body,
-      categoryId: parseInt(body.categoryId),
-      image: urlImage,
-    };
-
 
 
     const updateProduct = await service.update(id,data);
@@ -172,6 +181,14 @@ router.delete('/:id',
 
 
 module.exports = router;
+
+
+
+
+
+
+
+
 
 
 

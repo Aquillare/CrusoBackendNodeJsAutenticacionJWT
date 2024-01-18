@@ -53,6 +53,20 @@ router.post('/',
   };
 });
 
+router.post('/admin',
+ passport.authenticate('jwt', {session:false}),
+ checkRoles('admin') ,
+ validatorHandler(createUserSchema, 'body'),
+ async (req,res,next)=> {
+  try{
+    const body = req.body;
+    const newCategory = await service.create(body);
+    res.status(201).json(newCategory);
+  } catch(err){
+    next(err);
+  };
+});
+
 router.patch('/:id',
 passport.authenticate('jwt', {session:false}),
 checkRoles('admin'),
